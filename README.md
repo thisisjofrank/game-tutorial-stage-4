@@ -12,7 +12,7 @@ and set up a PostgreSQL database (we recommend Neon for cloud hosting).
 
 ```bash
 # Start the server with environment variables loaded
-deno run --allow-net --allow-env --allow-read --env src/main.ts
+deno run --allow-net --allow-env --allow-read src/main.ts
 ```
 
 You can clone and deploy this project immediately to start building the Dino
@@ -91,10 +91,11 @@ DATABASE_URL=postgresql://username:password@localhost:5432/dino_runner
 
 ### Database Initialization
 
-Run the `dev` task to automatically create tables and initialize the database:
+The application automatically loads environment variables from the `.env` file
+and initializes the database schema on startup:
 
 ```bash
-deno task dev
+deno run --allow-net --allow-env --allow-read src/main.ts
 ```
 
 The database will be initialized with:
@@ -168,57 +169,94 @@ integration and player customization. The database connection is managed in
 
 ### Database Connection (`src/database/connection.ts`)
 
-We manage the PostgreSQL connection using the `postgres` module. The connection
-is established using either the `DATABASE_URL` environment variable or
-individual environment variables for user, password, database name, host, and
-port:
+We manage the PostgreSQL connection using the `npm:pg` Pool module for optimal
+Deno Deploy compatibility. The connection pool is established using either the
+`DATABASE_URL` environment variable, Deno Deploy standard PostgreSQL environment
+variables, or individual environment variables for local development:
 
 ```typescript
-import { Client } from "@db/postgres";
+import { Pool } from "npm:pg";
 
-let client: Client | null = null;
+let pool: Pool | null = null;
 
-export async function getDatabase(): Promise<Client> {
-  if (!client) {
+export function getDatabase(): Pool {
+  if (!pool) {
     // Try to use DATABASE_URL first (for Neon and other cloud providers)
     const databaseUrl = Deno.env.get("DATABASE_URL");
 
     if (databaseUrl) {
-      console.log("🔧 Using DATABASE_URL for connection");
-      client = new Client(databaseUrl);
-    } else {
-      // Fallback to individual environment variables
-      console.log("🔧 Using individual DB environment variables");
-      client = new Client({
-        user: Deno.env.get("DB_USER") || "postgres",
-        password: Deno.env.get("DB_PASSWORD") || "",
-        database: Deno.env.get("DB_NAME") || "dino_runner",
-        hostname: Deno.env.get("DB_HOST") || "localhost",
-        port: parseInt(Deno.env.get("DB_PORT") || "5432"),
+      console.log("🔧 Using DATABASE_URL for connection pool");
+      pool = new Pool({
+        connectionString: databaseUrl,
+        max: 10, // 10 connections in pool
       });
+    } else {
+      // Check if Deno Deploy standard PostgreSQL environment variables are available
+      const pgHost = Deno.env.get("PGHOST");
+      const pgUser = Deno.env.get("PGUSER");
+
+      if (pgHost && pgUser) {
+        console.log("🔧 Using Deno Deploy PostgreSQL environment variables");
+        const pgPassword = Deno.env.get("PGPASSWORD");
+        pool = new Pool({
+          host: pgHost,
+          user: pgUser,
+          password: pgPassword || undefined,
+          database: Deno.env.get("PGDATABASE") || "postgres",
+          port: parseInt(Deno.env.get("PGPORT") || "5432"),
+          max: 10,
+        });
+      } else {
+        // Fallback to custom environment variables for local development
+        console.log(
+          "🔧 Using custom DB environment variables (local development)",
+        );
+        const password = Deno.env.get("DB_PASSWORD");
+        pool = new Pool({
+          host: Deno.env.get("DB_HOST") || "localhost",
+          port: parseInt(Deno.env.get("DB_PORT") || "5432"),
+          database: Deno.env.get("DB_NAME") || "dino_runner",
+          user: Deno.env.get("DB_USER") || "postgres",
+          password: password || undefined,
+          max: 10,
+        });
+      }
     }
 
-    await client.connect();
-    console.log("�️ Database connected successfully");
+    console.log("🗄️ Database pool created successfully");
   }
 
-  return client;
+  return pool;
 }
 ```
 
-This code implements a singleton pattern for database connections, ensuring we
-only create one connection that's reused throughout the application.
+This code implements a connection pooling pattern optimized for Deno Deploy,
+ensuring efficient database connections that scale automatically. The pool
+manages up to 10 concurrent connections, reusing them efficiently to handle
+multiple requests.
 
-The `client` variable stores the database connection globally, preventing
-multiple connections from being created. It first checks for `DATABASE_URL`
-(preferred for cloud databases like Neon), then falls back to individual
-variables.
+The connection strategy uses a three-tier fallback approach:
 
-Once connected, the same client instance is returned on subsequent calls. The
-connection process includes logging to help debug connection issues
+1. DATABASE_URL - preferred for cloud databases like Neon
+2. Deno Deploy standard PostgreSQL environment variables - PGHOST, PGUSER, etc.
+3. Custom environment variables - for local development
 
-This flexible approach means the same code works whether you're using a cloud
-database service or a local PostgreSQL installation.
+Database queries use the client connection pattern for proper resource
+management:
+
+```typescript
+const client = await pool.connect();
+try {
+  const result = await client.query("SELECT * FROM table WHERE id = $1", [id]);
+  // Process result.rows
+} finally {
+  client.release(); // Always release client back to pool
+}
+```
+
+This approach ensures connections are properly returned to the pool and prevents
+connection leaks. The pool automatically handles connection lifecycle,
+reconnection on failures, and optimal resource utilization for cloud deployment.
 
 ### Score Submission (`public/js/game.js`)
 
@@ -259,10 +297,10 @@ async submitScoreToDatabase(gameDuration) {
 }
 ```
 
-This enhanced score submission function now tracks additional game metrics
-including obstacles avoided, game duration, and maximum speed reached. The
-server responds with global ranking information and indicates if the player
-achieved a new record.
+The score submission function now tracks additional game metrics including
+obstacles avoided, game duration, and maximum speed reached. The server responds
+with global ranking information and indicates if the player achieved a new
+record.
 
 The function gracefully handles network errors and provides detailed feedback
 about the submission status. On successful submission, it automatically
@@ -314,25 +352,6 @@ button system to improve the player experience. The interface includes:
 - Mobile-friendly design that adapts to different screen sizes
 - Hover effects and animations for better user interaction
 
-The HTML structure uses semantic elements and the updated button classes:
-
-```html
-<!-- Customization button -->
-<button onclick="openCustomization()" class="btn btn-primary btn-block">
-  Customize Game
-</button>
-
-<!-- Modal buttons -->
-<div class="modal-buttons">
-  <button onclick="savePlayerName()" class="btn btn-primary">
-    Save & Play
-  </button>
-  <button onclick="closeModal('playerModal')" class="btn btn-secondary">
-    Play Anonymous
-  </button>
-</div>
-```
-
 The CSS has been refactored to use a consolidated button system with CSS custom
 properties for consistent theming and maintainable styles.
 
@@ -363,7 +382,7 @@ cp .env.example .env
 # Edit .env with your database credentials (Neon DATABASE_URL recommended)
 
 # Start the server with environment variables loaded
-deno run dev
+deno run --allow-net --allow-env --allow-read src/main.ts
 ```
 
 Navigate to [http://localhost:8000](http://localhost:8000) and experience the
@@ -373,8 +392,8 @@ customization!
 ### Quick Commands Reference
 
 ```bash
-# Start the server (correct command with environment variables)
-deno run dev
+# Start the server (with automatic environment loading)
+deno run --allow-net --allow-env --allow-read src/main.ts
 
 # Test database connection
 psql "postgresql://your_connection_string_here"
@@ -392,7 +411,7 @@ By completing Stage 4, you'll have:
 
 - ✅ Integrated PostgreSQL database for persistent data storage
 - ✅ Built global leaderboard system with real-time rankings
-- ✅ Implemented player customization with theme and color options
+- ✅ Implemented player customization modal with theme and color options
 - ✅ Created player profile system with persistent settings
 - ✅ Added comprehensive API endpoints for data management
 - ✅ Enhanced UI with modals, responsive design, and modern button system
@@ -400,9 +419,7 @@ By completing Stage 4, you'll have:
 - ✅ Built scalable database schema for future features
 - ✅ Added game analytics and session tracking with detailed metrics
 - ✅ Created deployment-ready application with environment configuration
-- ✅ Refactored CSS with consolidated button system and CSS custom properties
-- ✅ Fixed BigInt serialization issues for Oak framework v17 compatibility
-- ✅ Resolved player name modal timing and event handling issues
+- ✅ Implemented connection pooling with automatic resource management
 
 The game now provides a complete multiplayer experience with social features,
 personalization, and persistent data! 🎮🏆

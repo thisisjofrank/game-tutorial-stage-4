@@ -163,7 +163,7 @@ router.get("/api/scores/:playerName", async (ctx: Context) => {
       ctx.response.body = {
         success: true,
         playerName,
-        personalBests: result.rows.map((row) => ({
+        personalBests: result.rows.map((row: any) => ({
           score: Number(row.score),
           obstaclesAvoided: Number(row.obstacles_avoided || 0),
           created_at: row.created_at,
