@@ -814,8 +814,8 @@ window.loadLeaderboard = async function () {
   try {
     const response = await fetch("/api/leaderboard");
     if (response.ok) {
-      const leaderboard = await response.json();
-      displayLeaderboard(leaderboard);
+      const data = await response.json();
+      displayLeaderboard(data.leaderboard);
     } else {
       displayLeaderboardError();
     }
@@ -835,7 +835,7 @@ function displayLeaderboard(leaderboard) {
   }
 
   const html = leaderboard.map((entry, index) => {
-    const rank = index + 1;
+    const rank = entry.rank || (index + 1);
     let rankClass = "";
 
     if (rank === 1) rankClass = "gold";
@@ -845,7 +845,7 @@ function displayLeaderboard(leaderboard) {
     return `
       <div class="leaderboard-item">
         <div class="leaderboard-rank ${rankClass}">${rank}</div>
-        <div class="leaderboard-name">${entry.player_name}</div>
+        <div class="leaderboard-name">${entry.playerName}</div>
         <div class="leaderboard-score">${entry.score.toLocaleString()}</div>
       </div>
     `;
