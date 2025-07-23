@@ -60,9 +60,9 @@ INSERT INTO players (username, email) VALUES
 ON CONFLICT (username) DO NOTHING;
 
 INSERT INTO high_scores (player_name, score, obstacles_avoided) VALUES 
-  ('DinoMaster', 1250, 25),
-  ('CactusJumper', 980, 19),
-  ('SpeedRunner', 1500, 30),
-  ('Anonymous', 750, 15),
-  ('ProGamer', 2000, 40)
+  ('DinoMaster', 12, 2),
+  ('CactusJumper', 9, 1),
+  ('SpeedRunner', 15, 3),
+  ('Anonymous', 75, 4),
+  ('ProGamer', 100, 5)
 ON CONFLICT DO NOTHING;

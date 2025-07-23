@@ -1,1 +1,1 @@
-localStorage.removeItem('playerName');
+localStorage.removeItem("playerName");
