@@ -223,101 +223,97 @@ database service or a local PostgreSQL installation.
 ### Score Submission (`public/js/game.js`)
 
 We have enhanced the game client to submit scores to the server and handle
-leaderboard updates. The score submission function now includes error handling
-and a fallback to local storage if the server is unavailable:
+leaderboard updates. The score submission function now includes detailed game
+statistics and error handling:
 
 ```js
-class DinoGame {
-  async submitScore(score) {
-    try {
-      const response = await fetch("/api/scores", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          playerName: this.playerName || "Anonymous",
-          score: score,
-        }),
-      });
+async submitScoreToDatabase(gameDuration) {
+  if (!this.playerName) return;
 
-      if (response.ok) {
-        console.log("Score submitted successfully!");
-        window.loadLeaderboard(); // Refresh leaderboard
+  try {
+    const response = await fetch("/api/scores", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        playerName: this.playerName,
+        score: Math.floor(this.score),
+        obstaclesAvoided: this.obstaclesAvoided,
+        gameDuration: gameDuration,
+        maxSpeed: this.maxSpeedReached,
+      }),
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      if (data.isNewRecord) {
+        console.log("🏆 NEW GLOBAL RECORD!");
+        this.showNewRecordMessage();
       }
-    } catch (error) {
-      console.error("Failed to submit score:", error);
-      // Fallback to localStorage
-      this.saveLocalScore(score);
+      console.log(`📊 Score submitted! Global rank: #${data.globalRank}`);
+      // Refresh leaderboard
+      this.loadGlobalLeaderboard();
     }
+  } catch (error) {
+    console.error("Failed to submit score:", error);
   }
 }
 ```
 
-This code handles the process of sending player scores to the server for global
-leaderboard tracking. It uses the `fetch()` API to send HTTP POST requests to
-the `/api/scores` endpoint. On successful submission, it immediately refreshes
-the leaderboard display to show updated rankings
+This enhanced score submission function now tracks additional game metrics including obstacles avoided, game duration, and maximum speed reached. The server responds with global ranking information and indicates if the player achieved a new record.
 
-We convert the score data to JSON format, with the player name (or "Anonymous"
-as fallback) and the achieved score.
-
-We can catch network or server errors with a try-catch block, allowing the game
-to gracefully handle submission failures. If the server is unavailable, it falls
-back to saving scores locally using `localStorage`.
-
-We also provide console logging to help developers debug submission issues.
-
-This approach ensures that players never lose their progress, even if there are
-temporary connectivity issues. The game remains playable offline while
-seamlessly syncing with the global leaderboard when the connection is restored.
+The function gracefully handles network errors and provides detailed feedback about the submission status. On successful submission, it automatically refreshes the leaderboard display to show updated rankings.
 
 ### Player Customization
 
-Players might want to personalize their gaming experience with different themes
-and colors. The customization system allows players to select their preferred
-dino color and background theme, which are saved in the database:
+Players can personalize their gaming experience with different themes, colors, and difficulty settings. The customization system allows players to select their preferred dino color and background theme, which are saved in the database:
 
 ```js
-// Apply theme customization
 applyCustomizations() {
-  const canvas = this.canvas;
-  
-  // Apply background theme
-  switch(this.settings.backgroundTheme) {
-    case 'desert':
-      canvas.style.background = 'linear-gradient(to bottom, #87CEEB 0%, #F4A460 100%)';
-      break;
-    case 'forest':
-      canvas.style.background = 'linear-gradient(to bottom, #87CEEB 0%, #98FB98 100%)';
-      break;
-    case 'night':
-      canvas.style.background = 'linear-gradient(to bottom, #191970 0%, #000000 100%)';
-      break;
-  }
-  
-  // Apply dino color
-  this.dinoColor = this.settings.dinoColor;
+  // Update canvas background
+  const theme = this.themes[this.settings.backgroundTheme] || this.themes.desert;
+  this.canvas.style.background = 
+    `linear-gradient(to bottom, ${theme.sky} 0%, ${theme.sky} 75%, ${theme.ground} 75%, ${theme.ground} 100%)`;
+
+  // Apply difficulty multiplier
+  const difficultyMultipliers = { easy: 0.8, normal: 1.0, hard: 1.3 };
+  this.initialGameSpeed = 3 * (difficultyMultipliers[this.settings.difficultyPreference] || 1.0);
+  this.gameSpeed = this.initialGameSpeed;
+
+  console.log(`🎨 Applied theme: ${this.settings.backgroundTheme}, difficulty: ${this.settings.difficultyPreference}`);
 }
 ```
 
-Here we use a switch statement to apply different background themes by setting
-CSS linear gradients on the canvas element. The dino color is also applied based
-on the player's saved preferences. These are used to customize the canvas
-background in real-time without requiring a page reload.
+The customization system dynamically applies themes using predefined color schemes and adjusts game difficulty by modifying the initial game speed. The `applyCustomizations()` method updates the canvas background with CSS gradients and sets appropriate difficulty multipliers.
 
-The customization options are fetched from the database when the game starts,
-allowing players to see their preferences immediately. The `this.settings`
-object contains the player's saved preferences from the database or localStorage
+Settings are automatically saved to the database for registered players or localStorage for anonymous users. The system supports multiple themes (desert, forest, night, rainbow, space) and three difficulty levels (easy, normal, hard).
 
-The customization system supports multiple themes (desert, forest, night,
-rainbow, space) and allows players to express their personality while
-maintaining the core gameplay experience. Settings are automatically saved and
-restored across browser sessions.
+Players can access customization options through a modal interface with intuitive controls for color picking, theme selection, and difficulty adjustment.
 
 ## Enhanced UI Features
 
-We have also enhanced the user interface with modals and responsive design to
-improve the player experience. With a modal for player names and a customization
-panel, players can easily set up their profiles and preferences.
+We have enhanced the user interface with modals, responsive design, and a modern button system to improve the player experience. The interface includes:
+
+- Player name entry and customization panels with clean, accessible modals
+- Consistent button styling using a base `.btn` class with variants (`.btn-primary`, `.btn-secondary`, etc.)
+- Mobile-friendly design that adapts to different screen sizes
+- Hover effects and animations for better user interaction
+
+The HTML structure uses semantic elements and the updated button classes:
+
+```html
+<!-- Customization button -->
+<button onclick="openCustomization()" class="btn btn-primary btn-block">
+  Customize Game
+</button>
+
+<!-- Modal buttons -->
+<div class="modal-buttons">
+  <button onclick="savePlayerName()" class="btn btn-primary">Save & Play</button>
+  <button onclick="closeModal('playerModal')" class="btn btn-secondary">Play Anonymous</button>
+</div>
+```
+
+The CSS has been refactored to use a consolidated button system with CSS custom properties for consistent theming and maintainable styles.
 
 ## Gotchas
 
@@ -378,11 +374,12 @@ By completing Stage 4, you'll have:
 - ✅ Implemented player customization with theme and color options
 - ✅ Created player profile system with persistent settings
 - ✅ Added comprehensive API endpoints for data management
-- ✅ Enhanced UI with modals and responsive design
+- ✅ Enhanced UI with modals, responsive design, and modern button system
 - ✅ Implemented fallback systems for offline functionality
 - ✅ Built scalable database schema for future features
-- ✅ Added game analytics and session tracking
+- ✅ Added game analytics and session tracking with detailed metrics
 - ✅ Created deployment-ready application with environment configuration
+- ✅ Refactored CSS with consolidated button system and CSS custom properties
 - ✅ Fixed BigInt serialization issues for Oak framework v17 compatibility
 - ✅ Resolved player name modal timing and event handling issues
 
