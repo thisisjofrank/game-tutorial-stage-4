@@ -4,7 +4,7 @@
     "start": "deno run --allow-net --allow-read --allow-env src/main.ts"
   },
   "imports": {
-    "@db/postgres": "jsr:@db/postgres@^0.19.5",
-    "@oak/oak": "jsr:@oak/oak@17"
+    "@oak/oak": "jsr:@oak/oak@17",
+    "pg": "npm:pg@^8.16.3"
   }
 }

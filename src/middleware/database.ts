@@ -6,8 +6,8 @@ export async function databaseMiddleware(
   next: () => Promise<unknown>,
 ): Promise<void> {
   try {
-    // Attach database connection to context
-    ctx.state.db = await getDatabase();
+    // Attach database pool to context
+    ctx.state.db = getDatabase();
     await next();
   } catch (error) {
     console.error("❌ Database middleware error:", error);

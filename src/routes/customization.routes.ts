@@ -8,16 +8,8 @@ router.get(
   "/api/customization/:playerName",
   async (ctx: RouterContext<"/api/customization/:playerName">) => {
     try {
-      const db = ctx.state.db;
+      const pool = ctx.state.db;
       const playerName = ctx.params.playerName;
-
-      // First try to find registered player
-      const playerResult = await db.queryObject(
-        `
-      SELECT id FROM players WHERE username = $1
-    `,
-        [playerName],
-      );
 
       let settings = {
         dinoColor: "#4CAF50",
@@ -26,36 +18,47 @@ router.get(
         difficultyPreference: "normal",
       };
 
-      if (playerResult.rows.length > 0) {
-        const playerId = Number(playerResult.rows[0].id);
-        const settingsResult = await db.queryObject(
-          `
-        SELECT dino_color, background_theme, sound_enabled, difficulty_preference
-        FROM player_settings
-        WHERE player_id = $1
-      `,
-          [playerId],
+      const client = await pool.connect();
+      try {
+        // First try to find registered player
+        const playerResult = await client.query(
+          `SELECT id FROM players WHERE username = $1`,
+          [playerName],
         );
 
-        if (settingsResult.rows.length > 0) {
-          const row = settingsResult.rows[0];
-          settings = {
-            dinoColor: row.dino_color,
-            backgroundTheme: row.background_theme,
-            soundEnabled: row.sound_enabled,
-            difficultyPreference: row.difficulty_preference,
-          };
-        }
-      } else {
-        // Check localStorage-style settings for anonymous players
-        const anonSettings = ctx.request.url.searchParams.get("settings");
-        if (anonSettings) {
-          try {
-            settings = { ...settings, ...JSON.parse(anonSettings) };
-          } catch {
-            // Use defaults if parsing fails
+        if (playerResult.rows.length > 0) {
+          const playerId = Number(playerResult.rows[0].id);
+          const settingsResult = await client.query(
+            `
+            SELECT dino_color, background_theme, sound_enabled, difficulty_preference
+            FROM player_settings
+            WHERE player_id = $1
+          `,
+            [playerId],
+          );
+
+          if (settingsResult.rows.length > 0) {
+            const row = settingsResult.rows[0];
+            settings = {
+              dinoColor: row.dino_color,
+              backgroundTheme: row.background_theme,
+              soundEnabled: row.sound_enabled,
+              difficultyPreference: row.difficulty_preference,
+            };
+          }
+        } else {
+          // Check localStorage-style settings for anonymous players
+          const anonSettings = ctx.request.url.searchParams.get("settings");
+          if (anonSettings) {
+            try {
+              settings = { ...settings, ...JSON.parse(anonSettings) };
+            } catch {
+              // Use defaults if parsing fails
+            }
           }
         }
+      } finally {
+        client.release();
       }
 
       ctx.response.body = {
@@ -79,7 +82,7 @@ router.post(
   "/api/customization",
   async (ctx: RouterContext<"/api/customization">) => {
     try {
-      const db = ctx.state.db;
+      const pool = ctx.state.db;
       const body = await ctx.request.body.json();
       const {
         playerName,
@@ -91,7 +94,6 @@ router.post(
 
       // Validate input
       const validThemes = ["desert", "forest", "night", "rainbow", "space"];
-      const validDifficulties = ["easy", "normal", "hard"];
 
       if (!playerName || !dinoColor || !validThemes.includes(backgroundTheme)) {
         ctx.response.status = 400;
@@ -102,44 +104,48 @@ router.post(
         return;
       }
 
-      // Create or find player
-      let playerId: number;
-      const playerResult = await db.queryObject(
-        `
-      INSERT INTO players (username) VALUES ($1)
-      ON CONFLICT (username) DO UPDATE SET updated_at = NOW()
-      RETURNING id
-    `,
-        [playerName],
-      );
+      const client = await pool.connect();
+      try {
+        // Create or find player
+        const playerResult = await client.query(
+          `
+        INSERT INTO players (username) VALUES ($1)
+        ON CONFLICT (username) DO UPDATE SET updated_at = NOW()
+        RETURNING id
+      `,
+          [playerName],
+        );
 
-      playerId = Number(playerResult.rows[0].id);
+        const playerId = Number(playerResult.rows[0].id);
 
-      // Save settings
-      await db.queryObject(
-        `
-      INSERT INTO player_settings (
-        player_id, 
-        dino_color, 
-        background_theme, 
-        sound_enabled, 
-        difficulty_preference
-      ) VALUES ($1, $2, $3, $4, $5)
-      ON CONFLICT (player_id) DO UPDATE SET
-        dino_color = $2,
-        background_theme = $3,
-        sound_enabled = $4,
-        difficulty_preference = $5,
-        updated_at = NOW()
-    `,
-        [
-          playerId,
-          dinoColor,
-          backgroundTheme,
-          soundEnabled,
-          difficultyPreference,
-        ],
-      );
+        // Save settings
+        await client.query(
+          `
+        INSERT INTO player_settings (
+          player_id, 
+          dino_color, 
+          background_theme, 
+          sound_enabled, 
+          difficulty_preference
+        ) VALUES ($1, $2, $3, $4, $5)
+        ON CONFLICT (player_id) DO UPDATE SET
+          dino_color = $2,
+          background_theme = $3,
+          sound_enabled = $4,
+          difficulty_preference = $5,
+          updated_at = NOW()
+      `,
+          [
+            playerId,
+            dinoColor,
+            backgroundTheme,
+            soundEnabled,
+            difficultyPreference,
+          ],
+        );
+      } finally {
+        client.release();
+      }
 
       ctx.response.body = {
         success: true,

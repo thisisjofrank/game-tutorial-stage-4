@@ -4,6 +4,10 @@ import { leaderboardRoutes } from "./routes/leaderboard.routes.ts";
 import { customizationRoutes } from "./routes/customization.routes.ts";
 import { databaseMiddleware } from "./middleware/database.ts";
 import { initializeDatabase } from "./database/migrations.ts";
+import { load } from "jsr:@std/dotenv";
+
+// Load environment variables from .env file
+await load({ export: true });
 
 // Deno Deploy uses dynamic ports, fallback to 8000 for local dev
 const PORT = parseInt(Deno.env.get("PORT") || "8000");
