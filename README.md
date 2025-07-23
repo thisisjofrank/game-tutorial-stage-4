@@ -259,13 +259,20 @@ async submitScoreToDatabase(gameDuration) {
 }
 ```
 
-This enhanced score submission function now tracks additional game metrics including obstacles avoided, game duration, and maximum speed reached. The server responds with global ranking information and indicates if the player achieved a new record.
+This enhanced score submission function now tracks additional game metrics
+including obstacles avoided, game duration, and maximum speed reached. The
+server responds with global ranking information and indicates if the player
+achieved a new record.
 
-The function gracefully handles network errors and provides detailed feedback about the submission status. On successful submission, it automatically refreshes the leaderboard display to show updated rankings.
+The function gracefully handles network errors and provides detailed feedback
+about the submission status. On successful submission, it automatically
+refreshes the leaderboard display to show updated rankings.
 
 ### Player Customization
 
-Players can personalize their gaming experience with different themes, colors, and difficulty settings. The customization system allows players to select their preferred dino color and background theme, which are saved in the database:
+Players can personalize their gaming experience with different themes, colors,
+and difficulty settings. The customization system allows players to select their
+preferred dino color and background theme, which are saved in the database:
 
 ```js
 applyCustomizations() {
@@ -283,18 +290,27 @@ applyCustomizations() {
 }
 ```
 
-The customization system dynamically applies themes using predefined color schemes and adjusts game difficulty by modifying the initial game speed. The `applyCustomizations()` method updates the canvas background with CSS gradients and sets appropriate difficulty multipliers.
+The customization system dynamically applies themes using predefined color
+schemes and adjusts game difficulty by modifying the initial game speed. The
+`applyCustomizations()` method updates the canvas background with CSS gradients
+and sets appropriate difficulty multipliers.
 
-Settings are automatically saved to the database for registered players or localStorage for anonymous users. The system supports multiple themes (desert, forest, night, rainbow, space) and three difficulty levels (easy, normal, hard).
+Settings are automatically saved to the database for registered players or
+localStorage for anonymous users. The system supports multiple themes (desert,
+forest, night, rainbow, space) and three difficulty levels (easy, normal, hard).
 
-Players can access customization options through a modal interface with intuitive controls for color picking, theme selection, and difficulty adjustment.
+Players can access customization options through a modal interface with
+intuitive controls for color picking, theme selection, and difficulty
+adjustment.
 
 ## Enhanced UI Features
 
-We have enhanced the user interface with modals, responsive design, and a modern button system to improve the player experience. The interface includes:
+We have enhanced the user interface with modals, responsive design, and a modern
+button system to improve the player experience. The interface includes:
 
 - Player name entry and customization panels with clean, accessible modals
-- Consistent button styling using a base `.btn` class with variants (`.btn-primary`, `.btn-secondary`, etc.)
+- Consistent button styling using a base `.btn` class with variants
+  (`.btn-primary`, `.btn-secondary`, etc.)
 - Mobile-friendly design that adapts to different screen sizes
 - Hover effects and animations for better user interaction
 
@@ -308,12 +324,17 @@ The HTML structure uses semantic elements and the updated button classes:
 
 <!-- Modal buttons -->
 <div class="modal-buttons">
-  <button onclick="savePlayerName()" class="btn btn-primary">Save & Play</button>
-  <button onclick="closeModal('playerModal')" class="btn btn-secondary">Play Anonymous</button>
+  <button onclick="savePlayerName()" class="btn btn-primary">
+    Save & Play
+  </button>
+  <button onclick="closeModal('playerModal')" class="btn btn-secondary">
+    Play Anonymous
+  </button>
 </div>
 ```
 
-The CSS has been refactored to use a consolidated button system with CSS custom properties for consistent theming and maintainable styles.
+The CSS has been refactored to use a consolidated button system with CSS custom
+properties for consistent theming and maintainable styles.
 
 ## Gotchas
 
