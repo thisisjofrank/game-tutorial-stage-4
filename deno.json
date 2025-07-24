@@ -1,10 +1,9 @@
 {
+  "name": "@game-tutorial/stage-4",
+  "version": "1.0.0",
+  "exports": "./src/main.ts",
   "tasks": {
     "dev": "deno run --allow-net --allow-read --allow-env --env-file --watch src/main.ts",
     "start": "deno run --allow-net --allow-read --allow-env src/main.ts"
-  },
-  "imports": {
-    "@oak/oak": "jsr:@oak/oak@17",
-    "pg": "npm:pg@^8.16.3"
   }
 }

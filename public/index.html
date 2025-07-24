@@ -1,201 +1,179 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link
-      rel="preload"
-      href="https://demo-styles.deno.deno.net/fonts/Moranga-Regular.woff2"
-      as="font"
-      type="font/woff2"
-      crossorigin
-    />
-    <link
-      rel="preload"
-      href="https://demo-styles.deno.deno.net/fonts/Moranga-Medium.woff2"
-      as="font"
-      type="font/woff2"
-      crossorigin
-    />
-    <link
-      rel="preload"
-      href="https://demo-styles.deno.deno.net/fonts/Recursive_Variable.woff2"
-      as="font"
-      type="font/woff2"
-      crossorigin
-    />
-    <link rel="stylesheet" href="https://demo-styles.deno.deno.net/styles.css">
-    <link rel="stylesheet" href="css/styles.css">
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
-    <title>Dino Runner</title>
-  </head>
 
-  <body>
-    <main>
-      <h1>🦕 Dino Runner</h1>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preload" href="https://demo-styles.deno.deno.net/fonts/Moranga-Regular.woff2" as="font" type="font/woff2"
+    crossorigin />
+  <link rel="preload" href="https://demo-styles.deno.deno.net/fonts/Moranga-Medium.woff2" as="font" type="font/woff2"
+    crossorigin />
+  <link rel="preload" href="https://demo-styles.deno.deno.net/fonts/Recursive_Variable.woff2" as="font"
+    type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="https://demo-styles.deno.deno.net/styles.css">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <title>Dino Runner</title>
+</head>
 
-      <section class="container">
-        <h2>Stage 4: Database & Customization</h2>
-        <p>
-          Complete game with global leaderboards! Jump over cacti, beat your
-          high score, and compete with players worldwide. Use <kbd>Space</kbd>
-          or <kbd>↑</kbd> to jump. Customize your dino and track your progress!
-        </p>
-      </section>
+<body>
+  <main>
+    <h1>🦕 Dino Runner</h1>
 
-      <section class="container canvas-container">
-        <canvas id="gameCanvas" width="800" height="200"></canvas>
-        <div class="game-ui">
-          <div class="score">Score: <span id="score">0</span></div>
-          <div class="high-score">
-            High Score: <span id="highScore">0</span>
-          </div>
-          <div class="btn btn-primary" id="gameStatus">Click to Start!</div>
+    <section class="container">
+      <h2>Stage 4: Database & Customization</h2>
+      <p>
+        Complete game with global leaderboards! Jump over cacti, beat your
+        high score, and compete with players worldwide. Use <kbd>Space</kbd>
+        or <kbd>↑</kbd> to jump. Customize your dino and track your progress!
+      </p>
+    </section>
+
+    <section class="container canvas-container">
+      <canvas id="gameCanvas" width="800" height="200"></canvas>
+      <div class="game-ui">
+        <div class="score">Score: <span id="score">0</span></div>
+        <div class="high-score">
+          High Score: <span id="highScore">0</span>
         </div>
-      </section>
-
+        <div class="btn btn-primary" id="gameStatus">Click to Start!</div>
+      </div>
       <button onclick="openCustomization()" class="btn btn-primary btn-block">
         Customize Game
       </button>
+    </section>
 
-      <section class="container">
-        <h3>Controls</h3>
-        <div class="control-grid">
-          <kbd>Space</kbd>
-          <kbd>↑</kbd>
-          <span class="click">🖱️ Click</span>
-          <span>Jump</span>
-          <span>Jump</span>
-          <span>Start/Jump</span>
+
+    <section class="container">
+      <h3>Controls</h3>
+      <div class="control-grid">
+        <kbd>Space</kbd>
+        <kbd>↑</kbd>
+        <span class="click">🖱️ Click</span>
+        <span>Jump</span>
+        <span>Jump</span>
+        <span>Start/Jump</span>
+      </div>
+    </section>
+
+    <!-- Global Leaderboard Section -->
+    <section class="container">
+      <h3>Global Leaderboard</h3>
+      <div class="leaderboard-container">
+        <div class="leaderboard-list" id="leaderboardList">
+          <div class="loading">Loading leaderboard...</div>
         </div>
-      </section>
-
-      <!-- Global Leaderboard Section -->
-      <section class="container">
-        <h3>Global Leaderboard</h3>
-        <div class="leaderboard-container">
-          <div class="leaderboard-list" id="leaderboardList">
-            <div class="loading">Loading leaderboard...</div>
-          </div>
+        <div style="text-align: center; margin-top: 15px;">
+          <a href="/leaderboard" class="btn btn-primary btn-block">View Full Leaderboard</a>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <section class="container">
-        <h3>Stage 4 Features</h3>
-        <div class="feature-grid">
-          <div class="feature-item">
-            <p class="icon">🏅</p>
-            <strong>Global Leaderboard</strong>
-            <p>Compete with players worldwide using PostgreSQL database</p>
-          </div>
-          <div class="feature-item">
-            <p class="icon">💅</p>
-            <strong>Player Customization</strong>
-            <p>
-              Personalize your dino color, background themes, and difficulty
-            </p>
-          </div>
-          <div class="feature-item">
-            <p class="icon">👤</p>
-            <strong>Persistent Profiles</strong>
-            <p>Save your progress and settings across browser sessions</p>
-          </div>
-          <div class="feature-item">
-            <p class="icon">📈</p>
-            <strong>Game Analytics</strong>
-            <p>Track detailed game statistics and performance metrics</p>
-          </div>
+    <section class="container">
+      <h3>Stage 4 Features</h3>
+      <div class="feature-grid">
+        <div class="feature-item">
+          <p class="icon">🏅</p>
+          <strong>Global Leaderboard</strong>
+          <p>Compete with players worldwide using PostgreSQL database</p>
         </div>
-      </section>
-
-      <!-- Player Name Modal -->
-      <div class="modal" id="playerModal">
-        <div class="modal-content">
-          <h3>🎮 Welcome to Dino Runner!</h3>
+        <div class="feature-item">
+          <p class="icon">💅</p>
+          <strong>Player Customization</strong>
           <p>
-            Enter your name to save scores and compete on the global
-            leaderboard:
+            Personalize your dino color, background themes, and difficulty
           </p>
-          <input
-            type="text"
-            id="playerNameInput"
-            placeholder="Your name"
-            maxlength="20"
-          />
-          <div class="modal-buttons">
-            <button onclick="savePlayerName()" class="btn btn-primary">
-              Save & Play
-            </button>
-            <button
-              onclick="closeModal('playerModal')"
-              class="btn btn-secondary"
-            >
-              Play Anonymous
-            </button>
-          </div>
+        </div>
+        <div class="feature-item">
+          <p class="icon">👤</p>
+          <strong>Persistent Profiles</strong>
+          <p>Save your progress and settings across browser sessions</p>
+        </div>
+        <div class="feature-item">
+          <p class="icon">📈</p>
+          <strong>Game Analytics</strong>
+          <p>Track detailed game statistics and performance metrics</p>
         </div>
       </div>
+    </section>
 
-      <!-- Customization Modal -->
-      <div class="modal" id="customizationModal">
-        <div class="modal-content">
-          <h3>🎨 Customize Your Game</h3>
-
-          <div class="customization-options">
-            <div class="option-group">
-              <label for="dinoColorPicker">Dino Color:</label>
-              <input type="color" id="dinoColorPicker" value="#4CAF50" />
-            </div>
-
-            <div class="option-group">
-              <label for="backgroundTheme">Background Theme:</label>
-              <select id="backgroundTheme">
-                <option value="desert">🏜️ Desert</option>
-                <option value="forest">🌲 Forest</option>
-                <option value="night">🌙 Night</option>
-                <option value="rainbow">🌈 Rainbow</option>
-                <option value="space">🚀 Space</option>
-              </select>
-            </div>
-
-            <div class="option-group">
-              <label for="difficultyPreference">Difficulty:</label>
-              <select id="difficultyPreference">
-                <option value="easy">😊 Easy</option>
-                <option value="normal">😐 Normal</option>
-                <option value="hard">😈 Hard</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="modal-buttons">
-            <button onclick="saveCustomization()" class="btn btn-primary">
-              Save Changes
-            </button>
-            <button
-              onclick="closeModal('customizationModal')"
-              class="btn btn-secondary"
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <section class="container status">
-        <h3>Server Status</h3>
+    <!-- Player Name Modal -->
+    <div class="modal" id="playerModal">
+      <div class="modal-content">
+        <h3>🎮 Welcome to Dino Runner!</h3>
         <p>
-          Server health check: <a href="/api/health" target="_blank"
-          >Health Check Endpoint</a>
+          Enter your name to save scores and compete on the global
+          leaderboard:
         </p>
-        <p>
-          <small>Should return:
-            <code>{"status": "ok", "message": "🦕 Stage 1 - Dino server is
+        <input type="text" id="playerNameInput" placeholder="Your name" maxlength="20" />
+        <div class="modal-buttons">
+          <button onclick="savePlayerName()" class="btn btn-primary">
+            Save & Play
+          </button>
+          <button onclick="closeModal('playerModal')" class="btn btn-secondary">
+            Play Anonymous
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Customization Modal -->
+    <div class="modal" id="customizationModal">
+      <div class="modal-content">
+        <h3>🎨 Customize Your Game</h3>
+
+        <div class="customization-options">
+          <div class="option-group">
+            <label for="dinoColorPicker">Dino Color:</label>
+            <input type="color" id="dinoColorPicker" value="#4CAF50" />
+          </div>
+
+          <div class="option-group">
+            <label for="backgroundTheme">Background Theme:</label>
+            <select id="backgroundTheme">
+              <option value="desert">🏜️ Desert</option>
+              <option value="forest">🌲 Forest</option>
+              <option value="night">🌙 Night</option>
+              <option value="rainbow">🌈 Rainbow</option>
+              <option value="space">🚀 Space</option>
+            </select>
+          </div>
+
+          <div class="option-group">
+            <label for="difficultyPreference">Difficulty:</label>
+            <select id="difficultyPreference">
+              <option value="easy">😊 Easy</option>
+              <option value="normal">😐 Normal</option>
+              <option value="hard">😈 Hard</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="modal-buttons">
+          <button onclick="saveCustomization()" class="btn btn-primary">
+            Save Changes
+          </button>
+          <button onclick="closeModal('customizationModal')" class="btn btn-secondary">
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <section class="container status">
+      <h3>Server Status</h3>
+      <p>
+        Server health check: <a href="/api/health" target="_blank">Health Check Endpoint</a>
+      </p>
+      <p>
+        <small>Should return:
+          <code>{"status": "ok", "message": "🦕 Stage 1 - Dino server is
               healthy!"}</code></small>
-        </p>
-      </section>
-    </main>
+      </p>
+    </section>
+  </main>
 
-    <script src="js/game.js" type="module"></script>
-  </body>
+  <script src="js/game.js" type="module"></script>
+</body>
+
 </html>

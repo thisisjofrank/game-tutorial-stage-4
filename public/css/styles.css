@@ -42,6 +42,10 @@ label {
   font-weight: bold;
 }
 
+nav {
+  margin-bottom: 1.5rem;
+}
+
 /* Game Canvas Styles */
 
 .container {
@@ -91,18 +95,6 @@ label {
   pointer-events: none;
 }
 
-/* ==============================================
-   BUTTON SYSTEM
-   ============================================== 
-   Base class: .btn
-   Variants: .btn-primary, .btn-secondary, .btn-warning, .btn-success, .btn-gradient
-   Sizes: .btn-small, .btn-large
-   Display: .btn-block (centered block button)
-   
-   Usage: <button class="btn btn-primary">Button</button>
-   ============================================== */
-
-/* Base Button Styles */
 .btn {
   padding: 0.3rem 1rem;
   border: 2px solid var(--secondary);
@@ -141,7 +133,7 @@ label {
 .btn-block {
   display: block;
   width: max-content;
-  margin: 0 auto 1rem;
+  margin: 1rem auto .5rem;
 }
 
 .score, .high-score {
@@ -284,6 +276,18 @@ p.icon {
 .leaderboard-score {
   font-weight: bold;
   color: var(--primary-dark);
+}
+
+.avatar {
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--secondary);
+  color: var(--dark);
+  text-align: center;
+  line-height: 40px;
+  font-weight: bold;
 }
 
 .loading {
@@ -465,7 +469,6 @@ p.icon {
   }
 }
 
-/* Enhanced Responsive Design for Stage 4 */
 @media (max-width: 768px) {
   .modal-content {
     padding: 1rem;
@@ -488,6 +491,23 @@ p.icon {
   .option-group input[type="color"] {
     height: 40px;
   }
+}
+
+/* Leaderboard grid */
+
+.leaderboard-grid {
+  display: grid;
+  grid-template-columns: repeat(5, auto);
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.player {
+  font-weight: bold;
+}
+
+.tl {
+  text-align: left;
 }
 
 .deploy-button {

@@ -46,8 +46,9 @@ Runner Game/
 │   └── css/
 │       └── styles.css            # Complete Stage 4 styling
 ├── deno.json                     # Deno configuration
-├── .env.example                  # Environment variables template
 └── README.md                     # Documentation
+
+Note: Environment variables are configured in .env.example at the monorepo root (../../.env.example)
 ```
 
 ## What's New in Stage 4?
@@ -78,8 +79,15 @@ automatically.
 
 ### Configuration
 
-There is a `.env.example` provided in the repo which you can copy and update
-with your own variables. Your `DATABASE_URL` should look like this:
+There is a `.env.example` provided in the **root of the monorepo** which you can copy and update
+with your own variables. This shared environment file is used by all stages:
+
+```bash
+# From the root directory (d:\game\)
+cp .env.example .env
+```
+
+Your `DATABASE_URL` should look like this:
 
 ```env
 # For Neon database
@@ -104,6 +112,10 @@ The database will be initialized with:
 - high_scores
 - player_settings
 - game_sessions
+
+## Web Pages
+
+We have now added a new dedicated leaderboard page at `/leaderboard`, alongside the main game page, at `/`.
 
 ## API Endpoints
 
@@ -377,11 +389,13 @@ const sanitizedScore = {
 ## Running Stage 4
 
 ```bash
-# Set up environment variables
+# Set up environment variables (from root directory)
+cd ../../
 cp .env.example .env
 # Edit .env with your database credentials (Neon DATABASE_URL recommended)
 
-# Start the server with environment variables loaded
+# Navigate back to Stage 4 and start the server
+cd packages/stage-4
 deno run --allow-net --allow-env --allow-read src/main.ts
 ```
 

@@ -6,8 +6,8 @@ import { databaseMiddleware } from "./middleware/database.ts";
 import { initializeDatabase } from "./database/migrations.ts";
 import { load } from "jsr:@std/dotenv";
 
-// Load environment variables from .env file
-await load({ export: true });
+// Load environment variables from root .env file
+await load({ export: true, envPath: "../../.env" });
 
 // Deno Deploy uses dynamic ports, fallback to 8000 for local dev
 const PORT = parseInt(Deno.env.get("PORT") || "8000");
@@ -49,6 +49,15 @@ app.use(databaseMiddleware);
 // Serve static files from public directory
 app.use(async (context, next) => {
   try {
+    // Special route for leaderboard page
+    if (context.request.url.pathname === '/leaderboard') {
+      await context.send({
+        root: `${Deno.cwd()}/public`,
+        path: "leaderboard.html",
+      });
+      return;
+    }
+
     await context.send({
       root: `${Deno.cwd()}/public`,
       index: "index.html",
@@ -74,12 +83,9 @@ app.listen({
 
 console.log(`🦕 Server is running on http://${HOST}:${PORT}`);
 console.log(`🎯 Visit http://${HOST}:${PORT} to see the game`);
-console.log(`❤️ Health check available at http://${HOST}:${PORT}/health`);
+console.log(`🏆 Global Leaderboard at http://${HOST}:${PORT}/leaderboard`);
 console.log(`🔧 API health check at http://${HOST}:${PORT}/api/health`);
 console.log(`🏆 Leaderboard API at http://${HOST}:${PORT}/api/leaderboard`);
 console.log(
   `🎨 Customization API at http://${HOST}:${PORT}/api/customization/options`,
 );
-console.log(`🎯 Visit http://${HOST}:${PORT} to see the game`);
-console.log(`❤️ Health check available at http://${HOST}:${PORT}/health`);
-console.log(`🔧 API health check at http://${HOST}:${PORT}/api/health`);
