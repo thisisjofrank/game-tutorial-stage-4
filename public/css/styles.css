@@ -133,7 +133,7 @@ nav {
 .btn-block {
   display: block;
   width: max-content;
-  margin: 1rem auto .5rem;
+  margin: 1rem auto 0.5rem;
 }
 
 .score, .high-score {

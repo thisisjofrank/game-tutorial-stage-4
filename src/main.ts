@@ -50,7 +50,7 @@ app.use(databaseMiddleware);
 app.use(async (context, next) => {
   try {
     // Special route for leaderboard page
-    if (context.request.url.pathname === '/leaderboard') {
+    if (context.request.url.pathname === "/leaderboard") {
       await context.send({
         root: `${Deno.cwd()}/public`,
         path: "leaderboard.html",
