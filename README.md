@@ -54,15 +54,15 @@ Runner Game/
 Note: Environment variables are configured in .env.example at the monorepo root (../../.env.example)
 ```
 
-## What's New in Stage 4?
+## What's new in Stage 4?
 
 Stage 4 transforms our game into a full-featured web application with PostgreSQL
 database integration, global leaderboards, player customization, and persistent
 game data.
 
-## Database Setup
+## Database setup
 
-### Option 1: Neon Cloud Database (Recommended)
+### Option 1: Neon cloud database (recommended)
 
 Neon is a serverless PostgreSQL database that provides a free tier for
 development, they will host your database online and handle scaling
@@ -101,7 +101,7 @@ DATABASE_URL=postgresql://username:password@host.neon.tech/dino_runner?sslmode=r
 DATABASE_URL=postgresql://username:password@localhost:5432/dino_runner
 ```
 
-### Database Initialization
+### Database initialization
 
 The application automatically loads environment variables from the `.env` file
 and initializes the database schema on startup:
@@ -117,12 +117,12 @@ The database will be initialized with:
 - player_settings
 - game_sessions
 
-## Web Pages
+## Web pages
 
 We have now added a new dedicated leaderboard page at `/leaderboard`, alongside
 the main game page, at `/`.
 
-## API Endpoints
+## API endpoints
 
 ### Leaderboard API
 
@@ -184,7 +184,7 @@ integration and player customization. The database connection is managed in
 `src/database/connection.ts`, and the API endpoints are defined in
 `src/routes/`.
 
-### Database Connection (`src/database/connection.ts`)
+### Database connection (`src/database/connection.ts`)
 
 We manage the PostgreSQL connection using the `npm:pg` Pool module for optimal
 Deno Deploy compatibility. The connection pool is established using either the
@@ -275,7 +275,7 @@ This approach ensures connections are properly returned to the pool and prevents
 connection leaks. The pool automatically handles connection lifecycle,
 reconnection on failures, and optimal resource utilization for cloud deployment.
 
-### Score Submission (`public/js/game.js`)
+### Score submission (`public/js/game.js`)
 
 We have enhanced the game client to submit scores to the server and handle
 leaderboard updates. The score submission function now includes detailed game
@@ -323,7 +323,7 @@ The function gracefully handles network errors and provides detailed feedback
 about the submission status. On successful submission, it automatically
 refreshes the leaderboard display to show updated rankings.
 
-### Player Customization
+### Player customization
 
 Players can personalize their gaming experience with different themes, colors,
 and difficulty settings. The customization system allows players to select their
@@ -358,7 +358,7 @@ Players can access customization options through a modal interface with
 intuitive controls for color picking, theme selection, and difficulty
 adjustment.
 
-## Enhanced UI Features
+## Enhanced UI features
 
 We have enhanced the user interface with modals, responsive design, and a modern
 button system to improve the player experience. The interface includes:
@@ -374,7 +374,7 @@ properties for consistent theming and maintainable styles.
 
 ## Gotchas
 
-### BigInt Serialization Fix
+### BigInt serialization fix
 
 PostgreSQL returns certain values as BigInt objects which cannot be serialized
 to JSON by default. This has been resolved by explicitly converting database
@@ -408,7 +408,7 @@ Navigate to [http://localhost:8000](http://localhost:8000) and experience the
 complete database-integrated dino runner with global leaderboards and
 customization!
 
-### Quick Commands Reference
+### Quick commands reference
 
 ```bash
 # Start the server (with automatic environment loading)
@@ -424,7 +424,7 @@ resetPlayerData()
 curl http://localhost:8000/api/health
 ```
 
-## Stage 4 Accomplishments
+## Stage 4 accomplishments
 
 By completing Stage 4, you'll have:
 
