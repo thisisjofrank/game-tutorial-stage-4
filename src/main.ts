@@ -34,7 +34,6 @@ app.use(async (context, next) => {
     context.response.status = 200;
     return;
   }
-
   await next();
 });
 
@@ -78,8 +77,8 @@ app.listen({
 
 console.log(`🦕 Server is running on http://${HOST}:${PORT}`);
 console.log(`🎯 Visit http://${HOST}:${PORT} to see the game`);
-console.log(`🏆 Global Leaderboard at http://${HOST}:${PORT}/leaderboard`);
 console.log(`🔧 API health check at http://${HOST}:${PORT}/api/health`);
+console.log(`🏆 Global Leaderboard at http://${HOST}:${PORT}/leaderboard`);
 console.log(`🏆 Leaderboard API at http://${HOST}:${PORT}/api/leaderboard`);
 console.log(
   `🎨 Customization API at http://${HOST}:${PORT}/api/customization/options`,
