@@ -5,26 +5,20 @@ TypeScript.
 
 ## Stage 4: Database Integration & Global Leaderboards
 
+Stage 4 transforms our game into a full-featured web application with PostgreSQL
+database integration, global leaderboards, player customization, and persistent
+game data.
+
 ### Getting started
-
-To run this project locally, you will need to install [Deno](https://deno.com/)
-and set up a PostgreSQL database (we recommend Neon for cloud hosting).
-
-```bash
-# Start the server with environment variables loaded
-deno run --allow-net --allow-env --allow-read src/main.ts
-```
 
 You can clone and deploy this project immediately to start building the Dino
 Runner game.
 
-[![Deploy on Deno](https://deno.com/button)](https://app.deno.com/new?clone=https://github.com/thisisjofrank/game-tutorial-stage-4.git&install=deno+install)
-
-You will need to edit your Deno Deploy build configuration to set the entrypoint
-of the project to `src/main.ts`.
+[![Deploy on Deno](https://deno.com/button)](https://app.deno.com/new?clone=https://github.com/thisisjofrank/game-tutorial-stage-4.git&install=deno+install&entrypoint=src/main.ts&mode=dynamic)
 
 Once deployed, you can clone the created project to your local machine to work
-on it.
+on it. Every time you commit and push changes to the GitHub repository, it will
+automatically deploy to Deno Deploy and you can see the changes live.
 
 ## Project structure
 
@@ -53,12 +47,6 @@ Runner Game/
 
 Note: Environment variables are configured in .env.example at the monorepo root (../../.env.example)
 ```
-
-## What's new in Stage 4?
-
-Stage 4 transforms our game into a full-featured web application with PostgreSQL
-database integration, global leaderboards, player customization, and persistent
-game data.
 
 ## Database setup
 
