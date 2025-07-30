@@ -1,11 +1,11 @@
-import { Application } from "jsr:@oak/oak/application";
+import { Application } from "@oak/oak/application";
 import { apiRouter } from "./routes/api.routes.ts";
 import { leaderboardRoutes } from "./routes/leaderboard.routes.ts";
 import { customizationRoutes } from "./routes/customization.routes.ts";
 import { databaseMiddleware } from "./middleware/database.ts";
 import { initializeDatabase } from "./database/migrations.ts";
 
-const PORT = parseInt(Deno.env.get("PORT") || "8000");
+const PORT = parseInt(Deno.env.get("PORT") || "8004");
 const HOST = Deno.env.get("HOST") || "localhost";
 
 const app = new Application();
