@@ -9,7 +9,7 @@ Stage 4 transforms our game into a full-featured web application with PostgreSQL
 database integration, global leaderboards, player customization, and persistent
 game data.
 
-### Getting started
+## Getting started
 
 You can clone and deploy this project immediately to start building the Dino
 Runner game.
@@ -88,6 +88,23 @@ DATABASE_URL=postgresql://username:password@host.neon.tech/dino_runner?sslmode=r
 # For local PostgreSQL
 DATABASE_URL=postgresql://username:password@localhost:5432/dino_runner
 ```
+
+## Adding a database to Deno Deploy
+
+Once you have set up your database, you can integrate it with your Deno Deploy
+application. In your [Deno Deploy dashboard](https://app.deno.com/), click the "Databases" tab and then "**+ Add Database**".
+
+To add a PostgreSQL database to your Deno Deploy application, follow these steps:
+
+1. **Create a Neon database**: Sign up for a free account at [neon.tech](https://neon.tech) and create a new PostgreSQL database.
+
+2. **Update environment variables**: In your Deno Deploy project, navigate to the "Environment Variables" section and add the following variables:
+
+   - `DATABASE_URL`: The connection string for your Neon database (found in the Neon dashboard).
+
+3. **Modify your application code**: Ensure your application uses the `DATABASE_URL` environment variable to connect to the database. This is typically done in your database connection code.
+
+4. **Deploy your changes**: Commit and push your changes to the GitHub repository. Deno Deploy will automatically pick up the new environment variables and deploy your application with database support.
 
 ### Database initialization
 
