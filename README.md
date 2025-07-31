@@ -94,19 +94,12 @@ DATABASE_URL=postgresql://username:password@localhost:5432/dino_runner
 Once you have set up your database, you can integrate it with your Deno Deploy
 application. In your [Deno Deploy dashboard](https://app.deno.com/), click the "Databases" tab and then "**+ Add Database**".
 
-<img width="511" height="1279" alt="image" src="https://github.com/user-attachments/assets/28a4ac6a-2054-4f44-b043-13c335051eff" />
+<img width="256" height="640" alt="Deno Deploy add database" src="https://github.com/user-attachments/assets/28a4ac6a-2054-4f44-b043-13c335051eff" />
 
-To add a PostgreSQL database to your Deno Deploy application, follow these steps:
+Add your database connection string to the form, and Deno Deploy will automatically
+configure the environment variables for your application. You can also manually add the Slug, Credentials and Port if needed. You do not need to include a PEM certificate for this example.
 
-1. **Create a Neon database**: Sign up for a free account at [neon.tech](https://neon.tech) and create a new PostgreSQL database.
-
-2. **Update environment variables**: In your Deno Deploy project, navigate to the "Environment Variables" section and add the following variables:
-
-   - `DATABASE_URL`: The connection string for your Neon database (found in the Neon dashboard).
-
-3. **Modify your application code**: Ensure your application uses the `DATABASE_URL` environment variable to connect to the database. This is typically done in your database connection code.
-
-4. **Deploy your changes**: Commit and push your changes to the GitHub repository. Deno Deploy will automatically pick up the new environment variables and deploy your application with database support.
+Once you have added the database details, you can test the connection and save it. Then you can assign the database to your application.
 
 ### Database initialization
 
