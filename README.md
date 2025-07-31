@@ -94,6 +94,8 @@ DATABASE_URL=postgresql://username:password@localhost:5432/dino_runner
 Once you have set up your database, you can integrate it with your Deno Deploy
 application. In your [Deno Deploy dashboard](https://app.deno.com/), click the "Databases" tab and then "**+ Add Database**".
 
+<img width="511" height="1279" alt="image" src="https://github.com/user-attachments/assets/28a4ac6a-2054-4f44-b043-13c335051eff" />
+
 To add a PostgreSQL database to your Deno Deploy application, follow these steps:
 
 1. **Create a Neon database**: Sign up for a free account at [neon.tech](https://neon.tech) and create a new PostgreSQL database.
