@@ -26,7 +26,7 @@ class DinoGame {
       dinoColor: "#4CAF50",
       backgroundTheme: "desert",
       soundEnabled: true,
-      difficultyPreference: "normal",
+      difficultyPreference: "normal"
     };
 
     // Dino properties
@@ -37,7 +37,7 @@ class DinoGame {
       height: 40,
       velocityY: 0,
       isJumping: false,
-      groundY: 150,
+      groundY: 150
     };
 
     // Physics
@@ -65,7 +65,7 @@ class DinoGame {
       forest: { sky: "#98FB98", ground: "#228B22" },
       night: { sky: "#191970", ground: "#2F4F4F" },
       rainbow: { sky: "#FF69B4", ground: "#FFD700" },
-      space: { sky: "#000000", ground: "#696969" },
+      space: { sky: "#000000", ground: "#696969" }
     };
 
     this.init();
@@ -106,20 +106,15 @@ class DinoGame {
 
   applyCustomizations() {
     // Update canvas background
-    const theme = this.themes[this.settings.backgroundTheme] ||
-      this.themes.desert;
-    this.canvas.style.background =
-      `linear-gradient(to bottom, ${theme.sky} 0%, ${theme.sky} 75%, ${theme.ground} 75%, ${theme.ground} 100%)`;
+    const theme = this.themes[this.settings.backgroundTheme] || this.themes.desert;
+    this.canvas.style.background = `linear-gradient(to bottom, ${theme.sky} 0%, ${theme.sky} 75%, ${theme.ground} 75%, ${theme.ground} 100%)`;
 
     // Apply difficulty multiplier
     const difficultyMultipliers = { easy: 0.8, normal: 1.0, hard: 1.3 };
-    this.initialGameSpeed = 3 *
-      (difficultyMultipliers[this.settings.difficultyPreference] || 1.0);
+    this.initialGameSpeed = 3 * (difficultyMultipliers[this.settings.difficultyPreference] || 1.0);
     this.gameSpeed = this.initialGameSpeed;
 
-    console.log(
-      `🎨 Applied theme: ${this.settings.backgroundTheme}, difficulty: ${this.settings.difficultyPreference}`,
-    );
+    console.log(`🎨 Applied theme: ${this.settings.backgroundTheme}, difficulty: ${this.settings.difficultyPreference}`);
   }
 
   async savePlayerSettings() {
@@ -130,8 +125,8 @@ class DinoGame {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             playerName: this.playerName,
-            ...this.settings,
-          }),
+            ...this.settings
+          })
         });
       } else {
         // Save to localStorage for anonymous users
@@ -157,21 +152,23 @@ class DinoGame {
   displayLeaderboard(leaderboard) {
     const leaderboardElement = document.getElementById("leaderboardList");
     if (leaderboardElement && leaderboard) {
-      leaderboardElement.innerHTML = leaderboard.map((entry) => `
+      leaderboardElement.innerHTML = leaderboard
+        .map(
+          (entry) => `
         <div class="leaderboard-entry">
           <span class="rank">#${entry.rank}</span>
           <span class="name">${entry.playerName}</span>
           <span class="hscore">${entry.score}</span>
         </div>
-      `).join("");
+      `
+        )
+        .join("");
     }
   }
 
   showPlayerNamePrompt() {
     console.log(`🎮 Checking player name... Current: "${this.playerName}"`);
-    if (
-      !this.playerName || this.playerName === "" || this.playerName === "null"
-    ) {
+    if (!this.playerName || this.playerName === "" || this.playerName === "null") {
       console.log("🎮 No player name found, showing prompt...");
       setTimeout(() => {
         const modal = document.getElementById("playerModal");
@@ -274,18 +271,17 @@ class DinoGame {
     const obstacleTypes = [
       { width: 20, height: 40, type: "cactus-small" },
       { width: 25, height: 50, type: "cactus-medium" },
-      { width: 30, height: 35, type: "cactus-wide" },
+      { width: 30, height: 35, type: "cactus-wide" }
     ];
 
-    const obstacle =
-      obstacleTypes[Math.floor(Math.random() * obstacleTypes.length)];
+    const obstacle = obstacleTypes[Math.floor(Math.random() * obstacleTypes.length)];
 
     this.obstacles.push({
       x: this.canvas.width,
       y: this.groundY - obstacle.height,
       width: obstacle.width,
       height: obstacle.height,
-      type: obstacle.type,
+      type: obstacle.type
     });
   }
 
@@ -316,12 +312,7 @@ class DinoGame {
     if (this.gameState !== "playing") return;
 
     for (let obstacle of this.obstacles) {
-      if (
-        this.dino.x < obstacle.x + obstacle.width &&
-        this.dino.x + this.dino.width > obstacle.x &&
-        this.dino.y < obstacle.y + obstacle.height &&
-        this.dino.y + this.dino.height > obstacle.y
-      ) {
+      if (this.dino.x < obstacle.x + obstacle.width && this.dino.x + this.dino.width > obstacle.x && this.dino.y < obstacle.y + obstacle.height && this.dino.y + this.dino.height > obstacle.y) {
         this.gameOver();
         return;
       }
@@ -333,12 +324,9 @@ class DinoGame {
 
     // Increase difficulty every 200 points
     const difficultyLevel = Math.floor(this.score / 200);
-    this.gameSpeed = this.initialGameSpeed + (difficultyLevel * 0.5);
+    this.gameSpeed = this.initialGameSpeed + difficultyLevel * 0.5;
     this.maxSpeedReached = Math.max(this.maxSpeedReached, this.gameSpeed);
-    this.obstacleSpawnRate = Math.max(
-      this.minObstacleSpawnRate,
-      120 - (difficultyLevel * 10),
-    );
+    this.obstacleSpawnRate = Math.max(this.minObstacleSpawnRate, 120 - difficultyLevel * 10);
   }
 
   async gameOver() {
@@ -351,11 +339,7 @@ class DinoGame {
     this.saveHighScore();
     this.updateHighScore();
     this.updateStatus("Game Over! Click to restart");
-    console.log(
-      `💀 Game Over! Final Score: ${
-        Math.floor(this.score)
-      } (${this.obstaclesAvoided} obstacles avoided)`,
-    );
+    console.log(`💀 Game Over! Final Score: ${Math.floor(this.score)} (${this.obstaclesAvoided} obstacles avoided)`);
   }
 
   async submitScoreToDatabase(gameDuration) {
@@ -370,8 +354,8 @@ class DinoGame {
           score: Math.floor(this.score),
           obstaclesAvoided: this.obstaclesAvoided,
           gameDuration: gameDuration,
-          maxSpeed: this.maxSpeedReached,
-        }),
+          maxSpeed: this.maxSpeedReached
+        })
       });
 
       if (response.ok) {
@@ -449,14 +433,6 @@ class DinoGame {
     // Clear canvas
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-    // Draw ground line
-    this.ctx.strokeStyle = "#8B4513";
-    this.ctx.lineWidth = 2;
-    this.ctx.beginPath();
-    this.ctx.moveTo(0, this.groundY);
-    this.ctx.lineTo(this.canvas.width, this.groundY);
-    this.ctx.stroke();
-
     // Draw obstacles
     this.drawObstacles();
 
@@ -479,98 +455,45 @@ class DinoGame {
 
     for (let obstacle of this.obstacles) {
       // Draw main cactus body
-      this.ctx.fillRect(
-        obstacle.x,
-        obstacle.y,
-        obstacle.width,
-        obstacle.height,
-      );
+      this.ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
 
       // Add cactus details based on type
       this.ctx.fillStyle = "#1B5E20";
       if (obstacle.type === "cactus-small") {
         // Small spikes
         this.ctx.fillRect(obstacle.x - 3, obstacle.y + 10, 6, 4);
-        this.ctx.fillRect(
-          obstacle.x + obstacle.width - 3,
-          obstacle.y + 20,
-          6,
-          4,
-        );
+        this.ctx.fillRect(obstacle.x + obstacle.width - 3, obstacle.y + 20, 6, 4);
       } else if (obstacle.type === "cactus-medium") {
         // Medium spikes
         this.ctx.fillRect(obstacle.x - 4, obstacle.y + 8, 8, 6);
-        this.ctx.fillRect(
-          obstacle.x + obstacle.width - 4,
-          obstacle.y + 15,
-          8,
-          6,
-        );
-        this.ctx.fillRect(
-          obstacle.x + obstacle.width / 2 - 2,
-          obstacle.y + 25,
-          4,
-          8,
-        );
+        this.ctx.fillRect(obstacle.x + obstacle.width - 4, obstacle.y + 15, 8, 6);
+        this.ctx.fillRect(obstacle.x + obstacle.width / 2 - 2, obstacle.y + 25, 4, 8);
       } else if (obstacle.type === "cactus-wide") {
         // Wide cactus with multiple arms
         this.ctx.fillRect(obstacle.x - 5, obstacle.y + 5, 10, 8);
-        this.ctx.fillRect(
-          obstacle.x + obstacle.width - 5,
-          obstacle.y + 10,
-          10,
-          8,
-        );
-        this.ctx.fillRect(
-          obstacle.x + obstacle.width / 2 - 3,
-          obstacle.y + 20,
-          6,
-          6,
-        );
+        this.ctx.fillRect(obstacle.x + obstacle.width - 5, obstacle.y + 10, 10, 8);
+        this.ctx.fillRect(obstacle.x + obstacle.width / 2 - 3, obstacle.y + 20, 6, 6);
       }
 
       this.ctx.fillStyle = "#2E7D32"; // Reset color for next obstacle
     }
   }
-
   drawDino() {
-    // Animate dino legs when running (simple animation)
-    const legOffset = this.gameState === "playing" && !this.dino.isJumping
-      ? Math.floor(this.frameCount / 10) % 2 * 2
-      : 0;
+    const strideActive = this.gameState === "playing" && !this.dino.isJumping;
+    const legStride = strideActive ? (Math.floor(this.frameCount / 8) % 2 === 0 ? 2 : -2) : 0;
+    const legBaseY = this.dino.y + this.dino.height - 2;
 
-    // Use customizable dino color
-    this.ctx.fillStyle = this.settings.dinoColor;
-    this.ctx.fillRect(
-      this.dino.x,
-      this.dino.y,
-      this.dino.width,
-      this.dino.height,
-    );
+    this.ctx.fillStyle = "green";
+    this.ctx.fillRect(this.dino.x, this.dino.y, this.dino.width, this.dino.height);
 
-    // Simple dino face (darker shade of dino color)
-    const darkerColor = this.darkenColor(this.settings.dinoColor, 20);
-    this.ctx.fillStyle = darkerColor;
-    // Eye
+    this.ctx.fillStyle = "darkgreen";
     this.ctx.fillRect(this.dino.x + 25, this.dino.y + 8, 4, 4);
-    // Mouth
     this.ctx.fillRect(this.dino.x + 30, this.dino.y + 20, 8, 2);
 
-    // Simple legs with running animation
     if (!this.dino.isJumping) {
-      this.ctx.fillStyle = this.settings.dinoColor;
-      this.ctx.fillRect(
-        this.dino.x + 10,
-        this.dino.y + 40 + legOffset,
-        6,
-        8 - legOffset,
-      );
-      this.ctx.fillRect(
-        this.dino.x + 24,
-        this.dino.y + 40 - legOffset,
-        6,
-        8 + legOffset,
-      );
+      this.ctx.fillStyle = "green";
+      this.ctx.fillRect(this.dino.x + 10, legBaseY + legStride, 6, 8);
+      this.ctx.fillRect(this.dino.x + 24, legBaseY - legStride, 6, 8);
     }
   }
 
@@ -578,11 +501,9 @@ class DinoGame {
     const num = parseInt(color.replace("#", ""), 16);
     const amt = Math.round(2.55 * percent);
     const R = (num >> 16) - amt;
-    const G = (num >> 8 & 0x00FF) - amt;
-    const B = (num & 0x0000FF) - amt;
-    return "#" + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
-      (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
-      (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1);
+    const G = ((num >> 8) & 0x00ff) - amt;
+    const B = (num & 0x0000ff) - amt;
+    return "#" + (0x1000000 + (R < 255 ? (R < 1 ? 0 : R) : 255) * 0x10000 + (G < 255 ? (G < 1 ? 0 : G) : 255) * 0x100 + (B < 255 ? (B < 1 ? 0 : B) : 255)).toString(16).slice(1);
   }
 
   drawGameOver() {
@@ -594,63 +515,35 @@ class DinoGame {
     this.ctx.fillStyle = "#FFFFFF";
     this.ctx.font = "36px Arial";
     this.ctx.textAlign = "center";
-    this.ctx.fillText(
-      "GAME OVER",
-      this.canvas.width / 2,
-      this.canvas.height / 2 - 40,
-    );
+    this.ctx.fillText("GAME OVER", this.canvas.width / 2, this.canvas.height / 2 - 40);
 
     // Final score
     this.ctx.font = "20px Arial";
-    this.ctx.fillText(
-      `Final Score: ${Math.floor(this.score)}`,
-      this.canvas.width / 2,
-      this.canvas.height / 2 - 5,
-    );
+    this.ctx.fillText(`Final Score: ${Math.floor(this.score)}`, this.canvas.width / 2, this.canvas.height / 2 - 5);
 
     // High score
     if (Math.floor(this.score) === this.highScore && this.highScore > 0) {
       this.ctx.fillStyle = "#FFD700";
-      this.ctx.fillText(
-        "🏆 NEW HIGH SCORE! 🏆",
-        this.canvas.width / 2,
-        this.canvas.height / 2 + 25,
-      );
+      this.ctx.fillText("🏆 NEW HIGH SCORE! 🏆", this.canvas.width / 2, this.canvas.height / 2 + 25);
     } else if (this.highScore > 0) {
       this.ctx.fillStyle = "#CCCCCC";
-      this.ctx.fillText(
-        `High Score: ${this.highScore}`,
-        this.canvas.width / 2,
-        this.canvas.height / 2 + 25,
-      );
+      this.ctx.fillText(`High Score: ${this.highScore}`, this.canvas.width / 2, this.canvas.height / 2 + 25);
     }
 
     // Restart instruction
     this.ctx.fillStyle = "#FFFFFF";
     this.ctx.font = "16px Arial";
-    this.ctx.fillText(
-      "Click or press SPACE to restart",
-      this.canvas.width / 2,
-      this.canvas.height / 2 + 55,
-    );
+    this.ctx.fillText("Click or press SPACE to restart", this.canvas.width / 2, this.canvas.height / 2 + 55);
   }
 
   drawInstructions() {
     this.ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
     this.ctx.font = "24px Arial";
     this.ctx.textAlign = "center";
-    this.ctx.fillText(
-      "Press SPACE or ↑ to jump!",
-      this.canvas.width / 2,
-      this.canvas.height / 2 - 20,
-    );
+    this.ctx.fillText("Press SPACE or ↑ to jump!", this.canvas.width / 2, this.canvas.height / 2 - 20);
 
     this.ctx.font = "16px Arial";
-    this.ctx.fillText(
-      "Click anywhere to start",
-      this.canvas.width / 2,
-      this.canvas.height / 2 + 10,
-    );
+    this.ctx.fillText("Click anywhere to start", this.canvas.width / 2, this.canvas.height / 2 + 10);
   }
 
   updateScore() {
