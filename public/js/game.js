@@ -482,16 +482,19 @@ class DinoGame {
     const strideActive = this.gameState === "playing" && !this.dino.isJumping;
     const legStride = strideActive ? (Math.floor(this.frameCount / 8) % 2 === 0 ? 2 : -2) : 0;
     const legBaseY = this.dino.y + this.dino.height - 2;
+    const bodyColor = this.settings.dinoColor || "#4CAF50";
+    const accentColor = this.darkenColor(bodyColor, 20);
+    const legColor = this.darkenColor(bodyColor, 10);
 
-    this.ctx.fillStyle = "green";
+    this.ctx.fillStyle = bodyColor;
     this.ctx.fillRect(this.dino.x, this.dino.y, this.dino.width, this.dino.height);
 
-    this.ctx.fillStyle = "darkgreen";
+    this.ctx.fillStyle = accentColor;
     this.ctx.fillRect(this.dino.x + 25, this.dino.y + 8, 4, 4);
     this.ctx.fillRect(this.dino.x + 30, this.dino.y + 20, 8, 2);
 
     if (!this.dino.isJumping) {
-      this.ctx.fillStyle = "green";
+      this.ctx.fillStyle = legColor;
       this.ctx.fillRect(this.dino.x + 10, legBaseY + legStride, 6, 8);
       this.ctx.fillRect(this.dino.x + 24, legBaseY - legStride, 6, 8);
     }
@@ -592,9 +595,7 @@ async function checkHealth() {
 window.addEventListener("load", () => {
   checkHealth();
   window.dinoGame = new DinoGame();
-  console.log(
-    "🎯 Stage 4 complete: Database integration and customization ready!",
-  );
+  console.log("🎯 Stage 4 complete: Database integration and customization ready!");
 });
 
 // Add a function to reset player data for testing
@@ -687,12 +688,9 @@ window.saveCustomization = function () {
   if (window.dinoGame) {
     window.dinoGame.settings = {
       dinoColor: colorPicker?.value || window.dinoGame.settings.dinoColor,
-      backgroundTheme: themeSelect?.value ||
-        window.dinoGame.settings.backgroundTheme,
-      soundEnabled: soundToggle?.checked ??
-        window.dinoGame.settings.soundEnabled,
-      difficultyPreference: difficultySelect?.value ||
-        window.dinoGame.settings.difficultyPreference,
+      backgroundTheme: themeSelect?.value || window.dinoGame.settings.backgroundTheme,
+      soundEnabled: soundToggle?.checked ?? window.dinoGame.settings.soundEnabled,
+      difficultyPreference: difficultySelect?.value || window.dinoGame.settings.difficultyPreference
     };
 
     window.dinoGame.applyCustomizations();
@@ -722,35 +720,35 @@ function displayLeaderboard(leaderboard) {
   const leaderboardList = document.getElementById("leaderboardList");
 
   if (!leaderboard || leaderboard.length === 0) {
-    leaderboardList.innerHTML =
-      '<div class="loading">No scores yet. Be the first!</div>';
+    leaderboardList.innerHTML = '<div class="loading">No scores yet. Be the first!</div>';
     return;
   }
 
-  const html = leaderboard.map((entry, index) => {
-    const rank = entry.rank || (index + 1);
-    let rankClass = "";
+  const html = leaderboard
+    .map((entry, index) => {
+      const rank = entry.rank || index + 1;
+      let rankClass = "";
 
-    if (rank === 1) rankClass = "gold";
-    else if (rank === 2) rankClass = "silver";
-    else if (rank === 3) rankClass = "bronze";
+      if (rank === 1) rankClass = "gold";
+      else if (rank === 2) rankClass = "silver";
+      else if (rank === 3) rankClass = "bronze";
 
-    return `
+      return `
       <div class="leaderboard-item">
         <div class="leaderboard-rank ${rankClass}">${rank}</div>
         <div class="leaderboard-name">${entry.playerName}</div>
         <div class="leaderboard-score">${entry.score.toLocaleString()}</div>
       </div>
     `;
-  }).join("");
+    })
+    .join("");
 
   leaderboardList.innerHTML = html;
 }
 
 function displayLeaderboardError() {
   const leaderboardList = document.getElementById("leaderboardList");
-  leaderboardList.innerHTML =
-    '<div class="loading">Unable to load leaderboard. Check your connection.</div>';
+  leaderboardList.innerHTML = '<div class="loading">Unable to load leaderboard. Check your connection.</div>';
 }
 
 // Initialize UI when page loads
